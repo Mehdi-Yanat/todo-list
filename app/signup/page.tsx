@@ -63,15 +63,16 @@ const Signup: React.FC = () => {
     const password = watch('password', '');
 
     useEffect(() => {
-        if (signupSuccess) {
+        if (signupSuccess !== null) {
             router.push('/login')
         }
+    }, [signupSuccess, router])
 
+    useEffect(() => {
         if (authContext?.isAuthenticated) {
             router.push('/')
         }
-    }, [signupSuccess, authContext?.isAuthenticated, router])
-
+    }, [authContext?.isAuthenticated, router])
 
     if (authContext?.isAuthenticated) {
         return (

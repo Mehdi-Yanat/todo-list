@@ -1,9 +1,7 @@
 'use client';
 import { AuthContextType, User } from '@/types';
-import { Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { LoadingOutlined } from '@ant-design/icons';
 
 // Create the context
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,7 +11,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -21,19 +18,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setUser(JSON.parse(storedUser));
             setIsAuthenticated(true);
         }
-        // Set loading to false after checking for the user
-        setLoading(false);
     }, []);
 
-    useEffect(() => {
-        if (!loading) {
-            if (isAuthenticated) {
-                router.push('/'); // Change this to your dashboard route
-            } else {
-                router.push('/login');
-            }
-        }
-    }, [isAuthenticated, loading, router]);
 
     const login = (userData: User) => {
         setUser(userData);
@@ -47,15 +33,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.removeItem('user');
         router.push('/login')
     };
-
-    // Show loading spinner while checking authentication
-    if (loading) {
-        return (
-            <div className='flex h-screen bg-gray-900 items-center justify-center'>
-                <Spin size="large" indicator={<LoadingOutlined spin />} />
-            </div>
-        );
-    }
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>

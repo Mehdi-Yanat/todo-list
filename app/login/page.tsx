@@ -4,7 +4,7 @@ import { ColorModeContext } from '@/providers/ThemeProvider';
 import { LoginFormData } from '@/types';
 import { Input, Spin } from 'antd'
 import Link from 'next/link'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { EyeInvisibleOutlined, EyeTwoTone, LoadingOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
@@ -40,7 +40,7 @@ const Login: React.FC = () => {
             const storedUser = getUsers()
 
             if (storedUser.length > 0) {
-                const user = storedUser.find(user => user.email === email && user.password === password);                
+                const user = storedUser.find(user => user.email === email && user.password === password);
 
                 if (user?.email) {
                     // Successful login
@@ -59,8 +59,13 @@ const Login: React.FC = () => {
 
     };
 
-
     const { mode } = useContext(ColorModeContext);
+
+    useEffect(() => {
+        if (authContext?.isAuthenticated) {
+            router.push('/')
+        }
+    }, [authContext?.isAuthenticated, router])
 
     if (authContext?.isAuthenticated) {
         return (
@@ -69,7 +74,6 @@ const Login: React.FC = () => {
             </div>
         );
     }
-
 
     return (
         <section className={`${mode !== "dark" ? "bg-white" : "bg-gray-900"} h-screen flex items-center`}>
