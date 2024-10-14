@@ -52,32 +52,35 @@ const Tasks = ({ collapsed, handleCollapse }: { collapsed: boolean, handleCollap
     return (
         <>
             <Header style={{ padding: 0, background: colorBgContainer }}>
-                <div className="hidden md:flex items-center justify-between">
-                    <Button
-                        type="text"
-                        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                        onClick={handleCollapse}
-                        style={{
-                            width: 64,
-                            height: 64,
-                        }}
-                        classNames={{
-                            icon: `${mode === "dark" ? "text-white" : "text-gray-900"}`
-                        }}
-                    />
-
-                    <Button
-                        type="text"
-                        icon={mode === "dark" ? <SunOutlined /> : <MoonOutlined />}
-                        onClick={toggleColorMode}
-                        style={{
-                            width: 64,
-                            height: 64,
-                        }}
-                        classNames={{
-                            icon: `${mode === "dark" ? "text-white" : "text-gray-900"}`
-                        }}
-                    />
+                <div className="flex items-center justify-end md:justify-between">
+                    <div className='hidden md:flex' >
+                        <Button
+                            type="text"
+                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                            onClick={handleCollapse}
+                            style={{
+                                width: 64,
+                                height: 64,
+                            }}
+                            classNames={{
+                                icon: `${mode === "dark" ? "text-white" : "text-gray-900"}`
+                            }}
+                        />
+                    </div>
+                    <div  >
+                        <Button
+                            type="text"
+                            icon={mode === "dark" ? <SunOutlined /> : <MoonOutlined />}
+                            onClick={toggleColorMode}
+                            style={{
+                                width: 64,
+                                height: 64,
+                            }}
+                            classNames={{
+                                icon: `${mode === "dark" ? "text-white" : "text-gray-900"}`
+                            }}
+                        />
+                    </div>
                 </div>
             </Header>
             <Content
@@ -94,7 +97,7 @@ const Tasks = ({ collapsed, handleCollapse }: { collapsed: boolean, handleCollap
                         <HomeOutlined />
                         <h2>TO-DO</h2>
                     </div>
-                    <Dropdown menu={{ items }} placement="bottomCenter" arrow={{ pointAtCenter: true }}>
+                    <Dropdown menu={{ items }} placement="bottom" arrow={{ pointAtCenter: true }}>
                         <Button><FilterOutlined /></Button>
                     </Dropdown>
                 </div>

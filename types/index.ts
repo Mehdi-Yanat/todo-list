@@ -33,3 +33,15 @@ export type LoginFormData = {
     email: string;
     password: string;
 };
+
+export type User = {
+    email: string
+    password: string
+}
+
+export interface AuthContextType {
+    isAuthenticated: boolean;
+    user: User | null;
+    login: (userData: User) => void;
+    logout: () => void;
+}
