@@ -1,24 +1,25 @@
-import { Button, Dropdown, Input, Layout, theme } from 'antd'
+import { Button, Input, Layout, Radio, Spin, theme } from 'antd'
 import {
-    CheckCircleOutlined,
-    ClockCircleOutlined,
-    CloseCircleOutlined,
-    FilterOutlined,
     HomeOutlined,
+    LoadingOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     MoonOutlined,
-    PlusCircleOutlined,
     SunOutlined,
 } from '@ant-design/icons';
-import { MenuProps } from 'antd/lib';
-import { useContext } from 'react';
+import { useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { ColorModeContext } from '@/providers/ThemeProvider';
+import { initialState, reducer } from '@/reducers/taskReducer';
+import { Task } from '@/types';
+import TaskItem from './TaskItem';
+import { AddTask } from '@/reducers/taskActions';
 
 const { Header, Content } = Layout;
 
-
 const Tasks = ({ collapsed, handleCollapse }: { collapsed: boolean, handleCollapse: () => void }) => {
+
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const [newTaskTitle, setNewTaskTitle] = useState<string>('');
 
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -27,26 +28,34 @@ const Tasks = ({ collapsed, handleCollapse }: { collapsed: boolean, handleCollap
     const { mode, toggleColorMode } = useContext(ColorModeContext);
 
 
-    const items: MenuProps['items'] = [
-        {
-            key: '1',
-            label: (
-                <span className={`${mode === "dark" ? "text-white" : "text-gray-900"}`}  >
-                    <CheckCircleOutlined className='mr-1' />
-                    Done
-                </span>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <span className={`${mode === "dark" ? "text-white" : "text-gray-900"}`} >
-                    <ClockCircleOutlined className='mr-1' />
-                    Not Done
-                </span>
-            ),
-        },
-    ];
+    const fetchTasksFromLocalStorage = () => {
+        const localTasks = localStorage.getItem('tasks');
+        if (localTasks) {
+            const parsedTasks: Task[] = JSON.parse(localTasks);
+            dispatch({ type: 'SET_TASKS', payload: parsedTasks });
+        }
+    };
+
+    useEffect(() => {
+        fetchTasksFromLocalStorage();
+    }, []);
+
+    const handleAddTask = async () => {
+        if (newTaskTitle) {
+            const res = AddTask(newTaskTitle)(dispatch);
+            if (res) {
+                setNewTaskTitle('');
+            }
+        }
+    };
+
+
+    const filteredTasks = useMemo(() => {
+        const tasks = [...state.tasks].reverse(); // Create a copy and reverse to avoid mutating state
+        if (state.filter === 'completed') return tasks.filter(task => task.completed);
+        if (state.filter === 'not_completed') return tasks.filter(task => !task.completed);
+        return tasks; // 'all'
+    }, [state.tasks, state.filter]);
 
 
     return (
@@ -83,43 +92,58 @@ const Tasks = ({ collapsed, handleCollapse }: { collapsed: boolean, handleCollap
                     </div>
                 </div>
             </Header>
-            <Content
+            {state.loading ? <div className='flex h-screen  items-center justify-center'>
+                <Spin size="large" indicator={<LoadingOutlined spin />} />
+            </div> : <Content
                 style={{
+                    position: "relative",
                     margin: '24px 16px',
                     padding: 24,
                     minHeight: 280,
                     borderRadius: borderRadiusLG,
                 }}
-                className='overflow-y-auto'
+                className='overflow-y-scroll overflow-x-hidden'
             >
                 <div className='flex items-center justify-between' >
                     <div className='flex items-center text-xl font-bold gap-1' >
                         <HomeOutlined />
                         <h2>TO-DO</h2>
                     </div>
-                    <Dropdown menu={{ items }} placement="bottom" arrow={{ pointAtCenter: true }}>
-                        <Button><FilterOutlined /></Button>
-                    </Dropdown>
-                </div>
-                {Array(30).fill('').map(el => <div key={el} className='border mt-4 rounded-lg p-4 flex flex-col text-center sm:flex-row sm:text-left gap-2 items-center justify-between' >
-                    <p className='cursor-pointer' >3. Use Giphy’s API to recreate Giphy</p>
-                    <div className='flex gap-2' >
-                        <Button><CheckCircleOutlined /></Button>
-                        <Button><ClockCircleOutlined /></Button>
-                        <Button><CloseCircleOutlined /></Button>
+                    <div  >
+                        <Radio.Group
+                            className='flex gap-2'
+                            onChange={(e) => dispatch({ type: 'SET_FILTER', payload: e.target.value as 'all' | 'completed' | 'not_completed' })}
+                            value={state.filter}
+                        >
+                            <Radio value="all">All</Radio>
+                            <Radio value="completed">Done</Radio>
+                            <Radio value="not_completed">Not Done</Radio>
+                        </Radio.Group>
                     </div>
-                </div>)}
+                </div>
+                {filteredTasks.map(el => (
+                    <TaskItem
+                        dispatch={dispatch}
+                        key={el.id}
+                        task={el}
+                    />
+                ))}
                 <Input
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    allowClear
                     style={{
+                        position: 'sticky',
+                        bottom: 0,
+                        left: 0,
                         padding: '1em',
                         marginTop: '1em',
                         background: "white"
                     }}
                     size="large"
                     placeholder="Add a task"
-                    prefix={<PlusCircleOutlined />}
-                    suffix={<Button>Submit</Button>} />
-            </Content>
+                    suffix={<Button onClick={handleAddTask} disabled={!newTaskTitle} >Submit</Button>} />
+            </Content>}
         </>
     )
 }

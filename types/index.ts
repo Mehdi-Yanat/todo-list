@@ -46,6 +46,10 @@ export interface AuthContextType {
     logout: () => void;
 }
 
+export interface TaskItemProps {
+    task: Task;
+    dispatch: React.Dispatch<any>;
+}
 
 export interface Task {
     id: number;
