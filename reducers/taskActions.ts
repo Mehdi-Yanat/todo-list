@@ -33,6 +33,7 @@ export const UpdateTask = (taskId: number, newTitle: string) => {
     };
 };
 
+// SetStatus Action
 export const SetStatus = (taskId: number, completed: boolean) => {
     return (dispatch: Dispatch<Action>) => {
         const localTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
