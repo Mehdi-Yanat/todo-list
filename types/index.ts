@@ -51,6 +51,17 @@ export interface TaskItemProps {
     dispatch: React.Dispatch<any>;
 }
 
+
+export interface ModalProps {
+    open: boolean;
+    confirmLoading: boolean
+    updateTask: () => void;
+    handleCancel: () => void;
+    handleUpdateTaskTitle: (text: string) => void;
+    updateTaskTitle: string
+    error: string
+}
+
 export interface Task {
     id: number;
     title: string;
