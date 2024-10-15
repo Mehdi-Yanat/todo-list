@@ -3,7 +3,7 @@ import React from 'react'
 const Explication = () => {
     return (
         <div className='flex h-screen items-center justify-center' >
-            <div className='w-[90%] rounded-lg md:w-[60%] h-[90%] border shadow-xl' >
+            <div className='w-[90%] overflow-x-auto rounded-lg md:w-[60%] h-[90%] border shadow-xl' >
                 <h2 className='text-gray-900 text-center my-4 font-bold text-4xl' >Explication & Choix</h2>
                 <div className='p-8' >
                     <h3 className='text-blue-600 text-xl font-semibold' >Choix techniques</h3>
