@@ -14,6 +14,9 @@ export const getDesignTokens = (mode: string): { token: ExtendedToken } => {
                 defaultBg: mode === "light" ? 'white' : '#111827',
             },
             colorBgElevated: mode === "light" ? 'white' : '#111827',
+            Modal: {
+                titleColor: mode !== "light" ? 'white' : '#111827'
+            }
         } as ExtendedToken,
     };
 };

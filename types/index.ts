@@ -45,3 +45,27 @@ export interface AuthContextType {
     login: (userData: User) => void;
     logout: () => void;
 }
+
+
+export interface Task {
+    id: number;
+    title: string;
+    completed: boolean;
+}
+
+export interface State {
+    tasks: Task[];
+    filter: 'all' | 'completed' | 'not_completed';
+    loading: boolean;
+    error: string | null; // Optional: For error handling
+}
+
+export type Action =
+    | { type: 'SET_TASKS'; payload: Task[] }
+    | { type: 'ADD_TASK'; payload: Task }
+    | { type: 'UPDATE_TASK'; payload: { id: number; completed: boolean; title: string } }
+    | { type: 'DELETE_TASK'; payload: number }
+    | { type: 'SET_STATUS'; payload: { id: number; completed: boolean } } // New action for setting status
+    | { type: 'SET_LOADING'; payload: boolean }
+    | { type: 'SET_FILTER'; payload: 'all' | 'completed' | 'not_completed' }
+    | { type: 'SET_ERROR'; payload: string | null }; // Optional: For error handling
